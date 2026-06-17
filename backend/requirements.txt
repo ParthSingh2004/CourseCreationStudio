@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+google-genai
+gtts
+python-pptx
+reportlab
+pymupdf
+python-docx
+pydub
+sse-starlette
+python-multipart
+pydantic>=2.0
+python-dotenv
+audioop-lts==0.2.2
+sqlalchemy>=2.0.30
+requests
+lxml

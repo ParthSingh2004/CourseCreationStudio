@@ -1,0 +1,672 @@
+{
+  "course_id": "32431dad-71ab-46d7-9f7d-dca722cef6e7",
+  "outline": {
+    "title": "Frontend Engineering Onboarding: Advanced React & Modern Standards",
+    "description": "A comprehensive onboarding program designed for newly hired frontend engineers to align with our specific React implementation, architectural patterns, and modern frontend standards. This course covers monorepo navigation, advanced component design, state management, testing paradigms, and performance optimization to ensure high-quality product delivery.",
+    "total_modules": 5,
+    "modules": [
+      {
+        "index": 1,
+        "title": "Development Environment & Architecture",
+        "learning_objectives": [
+          "Navigate the internal monorepo structure efficiently",
+          "Set up the local development environment and tooling",
+          "Apply standard styling configurations and design system tokens"
+        ],
+        "lessons": [
+          {
+            "index": 1,
+            "title": "Monorepo Navigation & Architecture"
+          },
+          {
+            "index": 2,
+            "title": "Local Environment Setup & Tooling"
+          },
+          {
+            "index": 3,
+            "title": "Styling Standards & Design System Integration"
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Advanced React Patterns & State Management",
+        "learning_objectives": [
+          "Architect scalable components using functional patterns",
+          "Design custom React hooks for reusable logic",
+          "Implement local and global state management strategies"
+        ],
+        "lessons": [
+          {
+            "index": 1,
+            "title": "Component Design & Composition Patterns"
+          },
+          {
+            "index": 2,
+            "title": "Custom Hooks & Logic Extraction"
+          },
+          {
+            "index": 3,
+            "title": "State Management: Local vs. Global Solutions"
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "title": "Data Fetching & API Integration",
+        "learning_objectives": [
+          "Implement efficient data fetching patterns",
+          "Configure client-side caching strategies",
+          "Integrate APIs with strict TypeScript typing"
+        ],
+        "lessons": [
+          {
+            "index": 1,
+            "title": "Data Fetching & Caching Strategies"
+          },
+          {
+            "index": 2,
+            "title": "API Integration & Error Handling"
+          },
+          {
+            "index": 3,
+            "title": "TypeScript Typing for API Contracts"
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "title": "Testing Paradigms & Quality Assurance",
+        "learning_objectives": [
+          "Write robust unit tests using Jest",
+          "Implement integration tests with React Testing Library",
+          "Ensure WCAG accessibility standards in components"
+        ],
+        "lessons": [
+          {
+            "index": 1,
+            "title": "Unit Testing with Jest"
+          },
+          {
+            "index": 2,
+            "title": "Integration Testing with React Testing Library"
+          },
+          {
+            "index": 3,
+            "title": "Testing for Accessibility (a11y)"
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "title": "Performance Tuning & Code Delivery",
+        "learning_objectives": [
+          "Profile and optimize React rendering performance",
+          "Navigate the team's code review process",
+          "Utilize CI/CD pipelines for seamless deployment"
+        ],
+        "lessons": [
+          {
+            "index": 1,
+            "title": "Performance Profiling & Optimization"
+          },
+          {
+            "index": 2,
+            "title": "Code Review Standards & Best Practices"
+          },
+          {
+            "index": 3,
+            "title": "CI/CD Pipelines & Deployment Workflows"
+          }
+        ]
+      }
+    ]
+  },
+  "content": {
+    "lessons": [
+      {
+        "module_index": 1,
+        "lesson_index": 1,
+        "title": "Monorepo Navigation & Architecture",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Understanding Our Monorepo Structure",
+            "slide_bullets": [
+              "Workspace-based architecture using Turborepo",
+              "Separation of concerns: /apps vs. /packages",
+              "Shared configurations for TypeScript, ESLint, and Tailwind"
+            ],
+            "narration": "Welcome to our engineering team. Our codebase is organized as a monorepo managed by Turborepo. Inside, you will find two main directories: 'apps', which contains our deployable applications, and 'packages', which houses shared libraries such as our design system, custom hooks, and shared TypeScript configurations. This structure ensures code reusability and consistent tooling across all frontend projects."
+          }
+        ],
+        "key_takeaways": [
+          "The monorepo separates deployable applications in /apps from reusable libraries in /packages.",
+          "Turborepo is used to orchestrate builds, linting, and testing across workspaces."
+        ]
+      },
+      {
+        "module_index": 1,
+        "lesson_index": 2,
+        "title": "Local Environment Setup & Tooling",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Setting Up Your Workspace",
+            "slide_bullets": [
+              "Node.js version management using Volta or .nvmrc",
+              "Package management with pnpm for speed and disk efficiency",
+              "Pre-commit hooks with Husky and lint-staged"
+            ],
+            "narration": "To set up your local environment, ensure you are using the correct Node.js version specified in our .nvmrc file. We use pnpm as our package manager to guarantee fast, deterministic installations. Upon committing code, Husky will automatically run lint-staged to execute Prettier and ESLint, ensuring all code meets our quality standards before reaching remote branches."
+          }
+        ],
+        "key_takeaways": [
+          "Always use the designated Node.js version and pnpm for package management.",
+          "Husky pre-commit hooks enforce code formatting and linting automatically."
+        ]
+      },
+      {
+        "module_index": 1,
+        "lesson_index": 3,
+        "title": "Styling Standards & Design System Integration",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Implementing Design Tokens",
+            "slide_bullets": [
+              "Tailwind CSS integrated with our shared design tokens",
+              "Strict adherence to the semantic color palette",
+              "Utility-first styling with custom component extensions"
+            ],
+            "narration": "Our styling architecture relies on Tailwind CSS, configured globally via our shared design system package. When building UI components, always use our semantic design tokens for colors, spacing, and typography. Avoid hardcoding arbitrary values; instead, extend Tailwind's configuration if a specific custom value is required by the design specifications."
+          }
+        ],
+        "key_takeaways": [
+          "Tailwind CSS utility classes must align with our shared design tokens.",
+          "Avoid arbitrary values in Tailwind; use semantic tokens to maintain design consistency."
+        ]
+      },
+      {
+        "module_index": 2,
+        "lesson_index": 1,
+        "title": "Component Design & Composition Patterns",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Compound Components & Composition",
+            "slide_bullets": [
+              "Favor composition over deeply nested prop drilling",
+              "Implement compound components for complex UI controls",
+              "Maintain clean, readable JSX structures"
+            ],
+            "narration": "To build scalable React interfaces, we favor component composition. For complex UI controls like dropdowns or tabs, use the Compound Component pattern. This allows state to be shared implicitly among child components using React Context, resulting in highly flexible and readable JSX without polluting your components with unnecessary props."
+          }
+        ],
+        "key_takeaways": [
+          "Use compound components to manage implicit state in complex UI controls.",
+          "Composition reduces prop drilling and enhances component flexibility."
+        ]
+      },
+      {
+        "module_index": 2,
+        "lesson_index": 2,
+        "title": "Custom Hooks & Logic Extraction",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Extracting Stateful Logic",
+            "slide_bullets": [
+              "Isolate business logic from presentational components",
+              "Create reusable custom hooks for side effects and state",
+              "Adhere to the Rules of Hooks and clean up side effects"
+            ],
+            "narration": "Keep your UI components thin by extracting business logic, state management, and side effects into custom React hooks. This separation of concerns makes your components purely presentational and highly testable. When writing custom hooks, always ensure proper cleanup of event listeners, subscriptions, or timers to prevent memory leaks."
+          }
+        ],
+        "key_takeaways": [
+          "Custom hooks isolate business logic, leaving components focused on rendering.",
+          "Always implement cleanup functions within hooks to prevent memory leaks."
+        ]
+      },
+      {
+        "module_index": 2,
+        "lesson_index": 3,
+        "title": "State Management: Local vs. Global Solutions",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Choosing the Right State Strategy",
+            "slide_bullets": [
+              "Use local useState and useReducer for component-specific state",
+              "Leverage Zustand for lightweight, global client-side state",
+              "Avoid overusing React Context for high-frequency updates"
+            ],
+            "narration": "Choosing the correct state management tool is critical. For component-specific state, rely on standard useState or useReducer hooks. For global, client-side state, we use Zustand due to its simplicity and performance. Avoid using React Context for high-frequency state updates, as it can trigger unnecessary re-renders across the entire component tree."
+          }
+        ],
+        "key_takeaways": [
+          "Keep state as local as possible to optimize rendering performance.",
+          "Use Zustand for global client-side state, and reserve React Context for low-frequency updates."
+        ]
+      },
+      {
+        "module_index": 3,
+        "lesson_index": 1,
+        "title": "Data Fetching & Caching Strategies",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Server State with TanStack Query",
+            "slide_bullets": [
+              "Manage server state using TanStack Query (React Query)",
+              "Configure staleTime and cacheTime to optimize network requests",
+              "Implement optimistic updates for responsive user experiences"
+            ],
+            "narration": "We manage all server state using TanStack Query. This library handles caching, background updates, and stale data out of the box. Be sure to configure appropriate staleTime and cacheTime values based on how dynamic the data is. For mutations, implement optimistic updates to make the user interface feel instantaneous."
+          }
+        ],
+        "key_takeaways": [
+          "TanStack Query is our standard for managing, caching, and syncing server state.",
+          "Optimistic updates improve perceived performance during data mutations."
+        ]
+      },
+      {
+        "module_index": 3,
+        "lesson_index": 2,
+        "title": "API Integration & Error Handling",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Robust API Clients & Error Boundaries",
+            "slide_bullets": [
+              "Standardized Axios client with global interceptors",
+              "Graceful error handling using React Error Boundaries",
+              "Structured fallback UIs for network failures"
+            ],
+            "narration": "All network requests go through our standardized Axios client, which automatically injects authentication tokens and handles global error logging. To prevent application crashes during network or runtime failures, wrap your route components in React Error Boundaries to display user-friendly fallback interfaces."
+          }
+        ],
+        "key_takeaways": [
+          "Axios interceptors handle global request and response concerns.",
+          "Error Boundaries isolate runtime failures and preserve application stability."
+        ]
+      },
+      {
+        "module_index": 3,
+        "lesson_index": 3,
+        "title": "TypeScript Typing for API Contracts",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "End-to-End Type Safety",
+            "slide_bullets": [
+              "Generate TypeScript interfaces from OpenAPI schemas",
+              "Validate runtime payloads using Zod schemas",
+              "Avoid using 'any' to preserve type safety across boundaries"
+            ],
+            "narration": "To maintain strict type safety, we generate TypeScript interfaces directly from our backend OpenAPI schemas. For dynamic runtime data validation, we use Zod. This ensures that the data entering our application matches our expected types, eliminating runtime errors caused by unexpected API contract changes."
+          }
+        ],
+        "key_takeaways": [
+          "Generate TypeScript types from backend schemas to ensure contract alignment.",
+          "Use Zod to validate external API payloads at the application boundary."
+        ]
+      },
+      {
+        "module_index": 4,
+        "lesson_index": 1,
+        "title": "Unit Testing with Jest",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Writing Effective Unit Tests",
+            "slide_bullets": [
+              "Use Jest for testing pure functions, utilities, and hooks",
+              "Mock external dependencies and modules cleanly",
+              "Focus on behavior and edge cases rather than implementation details"
+            ],
+            "narration": "We use Jest to write unit tests for pure functions, utility modules, and custom hooks. When writing unit tests, focus on testing the behavior and edge cases of your code. Mock external dependencies, such as network clients or global stores, to keep your unit tests isolated, fast, and reliable."
+          }
+        ],
+        "key_takeaways": [
+          "Jest is our primary runner for unit testing pure logic and utilities.",
+          "Mock external modules to keep unit tests fast and isolated."
+        ]
+      },
+      {
+        "module_index": 4,
+        "lesson_index": 2,
+        "title": "Integration Testing with React Testing Library",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Testing Components as Users See Them",
+            "slide_bullets": [
+              "Query elements using accessible roles (getByRole)",
+              "Simulate realistic user interactions with userEvent",
+              "Avoid testing internal state or private component methods"
+            ],
+            "narration": "For component integration testing, we use React Testing Library. This library encourages testing components from the user's perspective. Always prioritize querying elements by their accessible roles, such as 'button' or 'textbox', and use the userEvent library to simulate realistic interactions like typing and clicking."
+          }
+        ],
+        "key_takeaways": [
+          "React Testing Library tests component behavior, not implementation details.",
+          "Query elements by accessible roles to ensure tests align with real-world usage."
+        ]
+      },
+      {
+        "module_index": 4,
+        "lesson_index": 3,
+        "title": "Testing for Accessibility (a11y)",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Ensuring Inclusive Experiences",
+            "slide_bullets": [
+              "Integrate jest-axe for automated accessibility checks",
+              "Ensure proper semantic HTML and ARIA attributes",
+              "Verify keyboard navigation and focus management"
+            ],
+            "narration": "Accessibility is a core requirement for our products. We use jest-axe to run automated accessibility audits on our components during integration testing. Additionally, ensure your components use semantic HTML, manage focus correctly when modals or menus open, and support full keyboard navigation."
+          }
+        ],
+        "key_takeaways": [
+          "Automate accessibility testing using jest-axe in your test suites.",
+          "Semantic HTML and robust focus management are essential for keyboard navigation."
+        ]
+      },
+      {
+        "module_index": 5,
+        "lesson_index": 1,
+        "title": "Performance Profiling & Optimization",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Optimizing React Rendering",
+            "slide_bullets": [
+              "Identify unnecessary re-renders using React DevTools Profiler",
+              "Memoize expensive computations with useMemo and useCallback",
+              "Implement code splitting with React.lazy and Suspense"
+            ],
+            "narration": "Performance issues should be diagnosed using the React DevTools Profiler. Use useMemo and useCallback to memoize expensive computations and stable callback references only when profiling indicates a bottleneck. To improve initial load times, implement code splitting using React.lazy and Suspense for route-level components."
+          }
+        ],
+        "key_takeaways": [
+          "Profile components before applying memoization optimizations.",
+          "Use React.lazy and Suspense to split code and reduce initial bundle sizes."
+        ]
+      },
+      {
+        "module_index": 5,
+        "lesson_index": 2,
+        "title": "Code Review Standards & Best Practices",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Our Code Review Philosophy",
+            "slide_bullets": [
+              "Keep Pull Requests small, focused, and atomic",
+              "Adhere to Conventional Commits for clear history",
+              "Provide constructive, actionable feedback in reviews"
+            ],
+            "narration": "Our code review process is designed to maintain high quality and share knowledge. Keep your Pull Requests small and focused on a single task. We follow the Conventional Commits standard for commit messages. When reviewing peer code, focus on architecture, readability, and edge cases, keeping feedback constructive and actionable."
+          }
+        ],
+        "key_takeaways": [
+          "Small, atomic Pull Requests speed up reviews and reduce integration bugs.",
+          "Conventional Commits are required to maintain a clean, automated changelog."
+        ]
+      },
+      {
+        "module_index": 5,
+        "lesson_index": 3,
+        "title": "CI/CD Pipelines & Deployment Workflows",
+        "segments": [
+          {
+            "slide_index": 1,
+            "slide_title": "Continuous Integration & Delivery",
+            "slide_bullets": [
+              "Automated linting, formatting, and testing on every push",
+              "Preview deployments generated automatically for PRs",
+              "Production deployments triggered via main branch merges"
+            ],
+            "narration": "Our CI/CD pipeline, built on GitHub Actions, automatically runs linting, formatting, and unit tests on every push. Every Pull Request generates an isolated preview deployment, allowing designers and product managers to review changes. Once merged into the main branch, our pipeline automatically deploys the updates to production."
+          }
+        ],
+        "key_takeaways": [
+          "CI pipelines enforce quality checks automatically before code can be merged.",
+          "Preview deployments facilitate collaborative QA and design reviews."
+        ]
+      }
+    ],
+    "quizzes": [
+      {
+        "module_index": 1,
+        "questions": [
+          {
+            "question": "Where are reusable packages and shared configurations located in our monorepo?",
+            "options": [
+              "In the /apps directory",
+              "In the /packages directory",
+              "In the root node_modules folder",
+              "In the /config directory"
+            ],
+            "correct_index": 1,
+            "explanation": "Our monorepo structure separates deployable applications in /apps and reusable libraries, design tokens, and shared configurations in /packages."
+          },
+          {
+            "question": "Which tool is used to enforce code formatting and linting during the pre-commit stage?",
+            "options": [
+              "Turborepo",
+              "Husky and lint-staged",
+              "Volta",
+              "Tailwind CSS"
+            ],
+            "correct_index": 1,
+            "explanation": "Husky and lint-staged work together to run ESLint and Prettier on staged files before a commit is finalized."
+          }
+        ]
+      },
+      {
+        "module_index": 2,
+        "questions": [
+          {
+            "question": "What pattern is recommended for managing implicit state among a group of related UI components?",
+            "options": [
+              "Prop Drilling Pattern",
+              "Higher-Order Components",
+              "Compound Components Pattern",
+              "Redux State Pattern"
+            ],
+            "correct_index": 2,
+            "explanation": "The Compound Components pattern allows parent and child components to share state implicitly using React Context, making the JSX clean and flexible."
+          },
+          {
+            "question": "Why is Zustand preferred over React Context for high-frequency global state updates?",
+            "options": [
+              "Zustand does not support TypeScript.",
+              "React Context can trigger unnecessary re-renders across the entire component tree.",
+              "Zustand is built directly into the React core library.",
+              "React Context cannot handle asynchronous actions."
+            ],
+            "correct_index": 1,
+            "explanation": "React Context can cause performance bottlenecks because any update to the context value forces all consuming components to re-render. Zustand avoids this with selector-based subscriptions."
+          }
+        ]
+      },
+      {
+        "module_index": 3,
+        "questions": [
+          {
+            "question": "Which library is our standard for managing and caching server state?",
+            "options": [
+              "Zustand",
+              "Axios",
+              "TanStack Query",
+              "Zod"
+            ],
+            "correct_index": 2,
+            "explanation": "TanStack Query (formerly React Query) is our standard library for fetching, caching, and synchronizing server state."
+          },
+          {
+            "question": "How do we validate external API payloads at the application boundary?",
+            "options": [
+              "Using TypeScript 'any' types",
+              "Using Zod schemas for runtime validation",
+              "Using Axios interceptors only",
+              "Using Jest assertions"
+            ],
+            "correct_index": 1,
+            "explanation": "We use Zod schemas to perform runtime validation on API payloads, ensuring that unexpected backend changes do not cause silent frontend failures."
+          }
+        ]
+      },
+      {
+        "module_index": 4,
+        "questions": [
+          {
+            "question": "What is the preferred way to query elements when writing integration tests with React Testing Library?",
+            "options": [
+              "By querying CSS class names directly",
+              "By using internal component state values",
+              "By accessible roles (e.g., getByRole)",
+              "By database IDs"
+            ],
+            "correct_index": 2,
+            "explanation": "React Testing Library recommends querying elements by their accessible roles to mimic how assistive technologies and real users interact with the UI."
+          },
+          {
+            "question": "Which tool do we use to automate accessibility audits during integration testing?",
+            "options": [
+              "Jest-axe",
+              "ESLint",
+              "Prettier",
+              "React DevTools"
+            ],
+            "correct_index": 0,
+            "explanation": "We integrate jest-axe into our testing suite to run automated accessibility checks and catch common WCAG violations."
+          }
+        ]
+      },
+      {
+        "module_index": 5,
+        "questions": [
+          {
+            "question": "What should you do before applying optimization techniques like useMemo or useCallback?",
+            "options": [
+              "Apply them to every component by default",
+              "Profile the application using React DevTools to identify actual bottlenecks",
+              "Disable CI/CD pipelines to speed up local builds",
+              "Convert all components into class components"
+            ],
+            "correct_index": 1,
+            "explanation": "Premature optimization can complicate code. You should always profile the application first to ensure memoization is targeting an actual performance bottleneck."
+          },
+          {
+            "question": "What commit standard do we follow to maintain structured and automated changelogs?",
+            "options": [
+              "Ad-hoc Commit Messages",
+              "Conventional Commits",
+              "GitHub Issue Linking only",
+              "Git Flow Commits"
+            ],
+            "correct_index": 1,
+            "explanation": "We follow the Conventional Commits standard to ensure our commit history is structured, readable, and compatible with automated release tooling."
+          }
+        ]
+      }
+    ],
+    "flashcards": [
+      {
+        "module_index": 1,
+        "cards": [
+          {
+            "front": "Turborepo",
+            "back": "The build system used to orchestrate tasks, caching, and workspace execution in our monorepo."
+          },
+          {
+            "front": "pnpm",
+            "back": "Our fast, disk-efficient package manager that uses a content-addressable store and hard links."
+          },
+          {
+            "front": "Design Tokens",
+            "back": "Visual design atoms (colors, spacing, typography) defined in our shared package and integrated with Tailwind CSS."
+          }
+        ]
+      },
+      {
+        "module_index": 2,
+        "cards": [
+          {
+            "front": "Compound Components",
+            "back": "A design pattern where components work together to manage state implicitly, avoiding prop drilling."
+          },
+          {
+            "front": "Zustand",
+            "back": "A lightweight, fast, and selector-based state management library used for global client-side state."
+          },
+          {
+            "front": "Custom Hooks",
+            "back": "Functions starting with 'use' that allow you to extract and share stateful logic across components."
+          }
+        ]
+      },
+      {
+        "module_index": 3,
+        "cards": [
+          {
+            "front": "TanStack Query",
+            "back": "Our standard library for fetching, caching, synchronizing, and updating server state in React."
+          },
+          {
+            "front": "Zod",
+            "back": "A TypeScript-first schema declaration and validation library used to validate API payloads at runtime."
+          },
+          {
+            "front": "Error Boundary",
+            "back": "A React component that catches JavaScript errors anywhere in its child component tree and displays a fallback UI."
+          }
+        ]
+      },
+      {
+        "module_index": 4,
+        "cards": [
+          {
+            "front": "React Testing Library",
+            "back": "A testing utility focused on testing React components from the user's perspective without relying on implementation details."
+          },
+          {
+            "front": "jest-axe",
+            "back": "A library used to run automated accessibility (a11y) audits within Jest tests."
+          },
+          {
+            "front": "getByRole",
+            "back": "The preferred React Testing Library query that searches for elements within the accessibility tree."
+          }
+        ]
+      },
+      {
+        "module_index": 5,
+        "cards": [
+          {
+            "front": "React.lazy",
+            "back": "A function that lets you render a dynamic import as a regular component, enabling code splitting."
+          },
+          {
+            "front": "Conventional Commits",
+            "back": "A specification for adding human and machine-readable meaning to commit messages."
+          },
+          {
+            "front": "Preview Deployment",
+            "back": "An isolated, ephemeral deployment generated automatically for each Pull Request to facilitate QA and review."
+          }
+        ]
+      }
+    ]
+  },
+  "audio": null,
+  "slide_path": "C:\\Users\\parth\\Desktop\\ContentCreation\\course-engine\\backend\\output\\slides\\32431dad-71ab-46d7-9f7d-dca722cef6e7.pptx",
+  "quiz_pdf_path": "C:\\Users\\parth\\Desktop\\ContentCreation\\course-engine\\backend\\output\\pdfs\\32431dad-71ab-46d7-9f7d-dca722cef6e7_quiz.pdf",
+  "summary_pdf_path": "C:\\Users\\parth\\Desktop\\ContentCreation\\course-engine\\backend\\output\\pdfs\\32431dad-71ab-46d7-9f7d-dca722cef6e7_summary.pdf"
+}
