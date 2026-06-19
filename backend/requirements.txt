@@ -1,7 +1,7 @@
 fastapi
 uvicorn[standard]
 google-genai
-gtts
+edge-tts
 python-pptx
 reportlab
 pymupdf

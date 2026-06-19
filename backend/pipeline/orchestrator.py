@@ -9,8 +9,8 @@ from models.schemas import GeneratedCourse, CourseOutline
 from pipeline.steps.call_1_design import generate_course_design
 from pipeline.steps.call_2_full_content import generate_full_content
 from tts.audio_builder import generate_course_audio
-from exporters.slide_builder import build_slides
-from exporters.pdf_builder import build_quiz_pdf, build_summary_pdf
+# build_slides, build_quiz_pdf, build_summary_pdf are now invoked on-demand
+# via the /api/v1/export/{course_id}/slides|quiz-pdf|summary-pdf endpoints.
 from exporters.image_fetcher import fetch_unsplash_image
 
 # STEPS are now dynamically built in run_pipeline
@@ -32,12 +32,9 @@ async def run_pipeline(params: dict, source_text: str, job_id: str) -> AsyncGene
     if 'video' in content_types or 'audio' in content_types:
         STEPS.append(("audio", "Synthesizing Audio & Script..."))
 
-    # Slides always run when content is written — not just for video
-    if any(ct in content_types for ct in ['text', 'quizzes', 'flashcards', 'video', 'audio']):
-        STEPS.append(("slides", "Building slide deck..."))
-        
-    if 'quizzes' in content_types or 'text' in content_types:
-        STEPS.append(("pdf", "Exporting PDFs..."))
+    # NOTE: 'slides' and 'pdf' steps have been removed from the pipeline.
+    # PPTX and PDF documents are now generated on-demand when the user
+    # clicks a download button in the course viewer.
 
     # Yield list of active steps for the frontend to render dynamically (M1)
     yield {"step": "init", "steps": [sid for sid, _ in STEPS]}
@@ -89,15 +86,7 @@ async def run_pipeline(params: dict, source_text: str, job_id: str) -> AsyncGene
                     audio_data = await generate_course_audio(course.content.lessons, job_id, voice)
                     course.audio = audio_data
                 
-            elif step_id == "slides":
-                slide_path = await asyncio.to_thread(build_slides, course)
-                course.slide_path = slide_path
-                
-            elif step_id == "pdf":
-                quiz_pdf = await asyncio.to_thread(build_quiz_pdf, course)
-                summary_pdf = await asyncio.to_thread(build_summary_pdf, course)
-                course.quiz_pdf_path = quiz_pdf
-                course.summary_pdf_path = summary_pdf
+            # 'slides' and 'pdf' steps removed — documents generated on-demand via export endpoints.
                 
             yield {"step": step_id, "label": label, "status": "done"}
         except Exception as e:

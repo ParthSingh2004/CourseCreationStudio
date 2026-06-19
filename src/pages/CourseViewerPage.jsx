@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   IconPlay, IconChevronDown, IconDownload, IconArrowLeft, IconArrowRight
 } from '../icons';
@@ -24,6 +24,7 @@ export default function CourseViewerPage({ jobId, onBack }) {
   const [activeFlashcardIndex, setActiveFlashcardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
+  const [downloading, setDownloading] = useState({ slides: false, quizPdf: false, summaryPdf: false });
 
   useEffect(() => {
     if (!jobId) {
@@ -110,6 +111,31 @@ export default function CourseViewerPage({ jobId, onBack }) {
     window.open(url, '_blank');
   };
 
+  const handleDownload = async (type, endpoint, filename) => {
+    setDownloading(prev => ({ ...prev, [type]: true }));
+    try {
+      const res = await fetch(`${API_BASE}/export/${jobId}/${endpoint}`);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: 'Unknown error' }));
+        alert(`Download failed: ${err.detail || res.statusText}`);
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert(`Download failed: ${e.message}`);
+    } finally {
+      setDownloading(prev => ({ ...prev, [type]: false }));
+    }
+  };
+
   return (
     <div className="viewer-layout">
       {/* Sidebar */}
@@ -173,14 +199,47 @@ export default function CourseViewerPage({ jobId, onBack }) {
 
         <div className="sidebar-divider" />
         <div className="sidebar-bottom" style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 14 }}>
-          <div className="sidebar-item" style={{ fontSize: 12, color: 'var(--brand)', fontWeight: 600, cursor: 'pointer' }} onClick={() => downloadFile(`${API_BASE}/export/${jobId}/slides`)}>
-            <IconDownload size={14} /> Download PPTX Slides
+          <div
+            className="sidebar-item"
+            style={{
+              fontSize: 12,
+              color: downloading.slides ? 'var(--text-muted)' : 'var(--brand)',
+              fontWeight: 600,
+              cursor: downloading.slides ? 'not-allowed' : 'pointer',
+              opacity: downloading.slides ? 0.6 : 1,
+            }}
+            onClick={() => !downloading.slides && handleDownload('slides', 'slides', 'Course_Slides.pptx')}
+          >
+            <IconDownload size={14} />
+            {downloading.slides ? ' Generating PPTX...' : ' Download PPTX Slides'}
           </div>
-          <div className="sidebar-item" style={{ fontSize: 12, color: 'var(--brand)', fontWeight: 600, cursor: 'pointer' }} onClick={() => downloadFile(`${API_BASE}/export/${jobId}/quiz-pdf`)}>
-            <IconDownload size={14} /> Download Quiz PDF
+          <div
+            className="sidebar-item"
+            style={{
+              fontSize: 12,
+              color: downloading.quizPdf ? 'var(--text-muted)' : 'var(--brand)',
+              fontWeight: 600,
+              cursor: downloading.quizPdf ? 'not-allowed' : 'pointer',
+              opacity: downloading.quizPdf ? 0.6 : 1,
+            }}
+            onClick={() => !downloading.quizPdf && handleDownload('quizPdf', 'quiz-pdf', 'Course_Quiz.pdf')}
+          >
+            <IconDownload size={14} />
+            {downloading.quizPdf ? ' Generating PDF...' : ' Download Quiz PDF'}
           </div>
-          <div className="sidebar-item" style={{ fontSize: 12, color: 'var(--brand)', fontWeight: 600, cursor: 'pointer' }} onClick={() => downloadFile(`${API_BASE}/export/${jobId}/summary-pdf`)}>
-            <IconDownload size={14} /> Download Summary PDF
+          <div
+            className="sidebar-item"
+            style={{
+              fontSize: 12,
+              color: downloading.summaryPdf ? 'var(--text-muted)' : 'var(--brand)',
+              fontWeight: 600,
+              cursor: downloading.summaryPdf ? 'not-allowed' : 'pointer',
+              opacity: downloading.summaryPdf ? 0.6 : 1,
+            }}
+            onClick={() => !downloading.summaryPdf && handleDownload('summaryPdf', 'summary-pdf', 'Course_Summary.pdf')}
+          >
+            <IconDownload size={14} />
+            {downloading.summaryPdf ? ' Generating PDF...' : ' Download Summary PDF'}
           </div>
           <div className="sidebar-divider" style={{ margin: '10px 0' }}/>
           <button onClick={onBack} style={{ background: 'transparent', border: '1px solid #e2e8f0', padding: '8px', borderRadius: '4px', cursor: 'pointer', fontSize: 12, width: '100%' }}>

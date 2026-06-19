@@ -60,7 +60,7 @@ export default function Topbar({ page, onSelectCourse, onGoHome }) {
           <path d="M8 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
           <circle cx="14" cy="18" r="3" fill="#fff"/>
         </svg>
-        CourseEngine AI
+        Chapter's CourseStudio
       </div>
 
       <div className="topbar-search" ref={dropdownRef}>
