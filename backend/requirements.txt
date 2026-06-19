@@ -16,4 +16,6 @@ sqlalchemy>=2.0.30
 requests
 lxml
 psycopg2-binary
+nodeenv
+
 
