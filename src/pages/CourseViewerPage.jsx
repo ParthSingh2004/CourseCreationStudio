@@ -35,16 +35,20 @@ export default function CourseViewerPage({ jobId, onBack }) {
     fetch(`${API_BASE}/course/${jobId}`)
       .then(res => res.json())
       .then(data => {
-        setCourseData(data);
-        if (data.outline && data.outline.modules.length > 0) {
-          const firstMod = data.outline.modules[0];
-          setOpenModules({ [firstMod.index]: true });
-          setActiveModuleIndex(firstMod.index);
-          
-          if (data.content && data.content.lessons) {
-             const firstLesson = data.content.lessons.find(l => l.module_index === firstMod.index);
-             if (firstLesson) setActiveLessonIndex(firstLesson.lesson_index);
+        if (data && !data.detail) {
+          setCourseData(data);
+          if (data.outline?.modules?.length > 0) {
+            const firstMod = data.outline.modules[0];
+            setOpenModules({ [firstMod.index]: true });
+            setActiveModuleIndex(firstMod.index);
+            
+            if (data.content?.lessons) {
+               const firstLesson = data.content.lessons.find(l => l.module_index === firstMod.index);
+               if (firstLesson) setActiveLessonIndex(firstLesson.lesson_index);
+            }
           }
+        } else {
+          setCourseData(null);
         }
         setLoading(false);
       })

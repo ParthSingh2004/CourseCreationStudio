@@ -16,10 +16,15 @@ export default function Topbar({ page, onSelectCourse, onGoHome }) {
     fetch(`${API_BASE}/courses`)
       .then(res => res.json())
       .then(data => {
-        setCourses(data);
+        if (Array.isArray(data)) {
+          setCourses(data);
+        } else {
+          setCourses([]);
+        }
       })
       .catch(err => {
         console.error(err);
+        setCourses([]);
       });
   }, []);
 
