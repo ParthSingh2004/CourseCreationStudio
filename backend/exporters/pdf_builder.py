@@ -5,6 +5,7 @@ from reportlab.lib.colors import HexColor
 from reportlab.lib.units import inch
 from models.schemas import GeneratedCourse
 import os
+import html
 from config import Config
 from typing import Optional
 
@@ -17,7 +18,7 @@ def build_quiz_pdf(course: GeneratedCourse) -> Optional[str]:
     styles = getSampleStyleSheet()
     story = []
     
-    story.append(Paragraph(f"Quiz: {course.outline.title}", styles['Title']))
+    story.append(Paragraph(f"Quiz: {html.escape(course.outline.title)}", styles['Title']))
     story.append(Spacer(1, 12))
         
     answer_key = []
@@ -25,12 +26,12 @@ def build_quiz_pdf(course: GeneratedCourse) -> Optional[str]:
     for quiz in course.content.quizzes:
         story.append(Paragraph(f"Module {quiz.module_index} Quiz", styles['Heading2']))
         for q in quiz.questions:
-            story.append(Paragraph(f"{q_num}. {q.question}", styles['Heading3']))
+            story.append(Paragraph(f"{q_num}. {html.escape(q.question)}", styles['Heading3']))
             for i, opt in enumerate(q.options):
-                story.append(Paragraph(f"{chr(65+i)}. {opt}", styles['Normal']))
+                story.append(Paragraph(f"{chr(65+i)}. {html.escape(opt)}", styles['Normal']))
             story.append(Spacer(1, 12))
             
-            answer_key.append(f"Q{q_num}: {chr(65+q.correct_index)} - {q.explanation}")
+            answer_key.append(f"Q{q_num}: {chr(65+q.correct_index)} - {html.escape(q.explanation)}")
             q_num += 1
             
     story.append(PageBreak())
@@ -73,21 +74,21 @@ def build_summary_pdf(course: GeneratedCourse) -> Optional[str]:
 
     story = []
     
-    story.append(Paragraph(f"Course Summary: {course.outline.title}", styles['Title']))
+    story.append(Paragraph(f"Course Summary: {html.escape(course.outline.title)}", styles['Title']))
     story.append(Spacer(1, 12))
         
     for module in course.outline.modules:
-        story.append(Paragraph(f"Module {module.index}: {module.title}", styles['Heading1']))
+        story.append(Paragraph(f"Module {module.index}: {html.escape(module.title)}", styles['Heading1']))
         story.append(Spacer(1, 8))
         
         lessons = [l for l in course.content.lessons if l.module_index == module.index]
         for lesson in lessons:
-            story.append(Paragraph(f"Lesson {lesson.lesson_index}: {lesson.title}", styles['Heading2']))
+            story.append(Paragraph(f"Lesson {lesson.lesson_index}: {html.escape(lesson.title)}", styles['Heading2']))
 
             # Key Takeaways bullets
             story.append(Paragraph("Key Takeaways:", styles['Heading3']))
             for tk in lesson.key_takeaways:
-                story.append(Paragraph(f"• {tk}", styles['Normal']))
+                story.append(Paragraph(f"• {html.escape(tk)}", styles['Normal']))
             story.append(Spacer(1, 10))
 
             # Lesson Essay — only if present (new courses)
@@ -96,7 +97,7 @@ def build_summary_pdf(course: GeneratedCourse) -> Optional[str]:
                 # Split on newlines so multi-paragraph essays render as separate paragraphs
                 for para in lesson.lesson_essay.split('\n'):
                     if para.strip():
-                        story.append(Paragraph(para.strip(), essay_style))
+                        story.append(Paragraph(html.escape(para.strip()), essay_style))
                 story.append(Spacer(1, 6))
 
             # Thin divider between lessons
@@ -106,8 +107,8 @@ def build_summary_pdf(course: GeneratedCourse) -> Optional[str]:
         if fc_deck and fc_deck.cards:
             story.append(Paragraph("Flashcards:", styles['Heading3']))
             for card in fc_deck.cards:
-                story.append(Paragraph(f"<b>F:</b> {card.front}", styles['Normal']))
-                story.append(Paragraph(f"<b>B:</b> {card.back}", styles['Normal']))
+                story.append(Paragraph(f"<b>F:</b> {html.escape(card.front)}", styles['Normal']))
+                story.append(Paragraph(f"<b>B:</b> {html.escape(card.back)}", styles['Normal']))
                 story.append(Spacer(1, 6))
         
         story.append(PageBreak())

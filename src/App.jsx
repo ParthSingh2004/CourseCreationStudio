@@ -18,7 +18,7 @@ export default function App() {
       <Topbar page={page} onSelectCourse={(id) => {
         setJobId(id);
         setPage('viewer');
-      }} />
+      }} onGoHome={() => setPage('design')} />
 
       <div className="main-body">
         {page === 'viewer' ? (

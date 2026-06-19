@@ -6,7 +6,7 @@ import {
 const API_BASE = import.meta.env.VITE_API_BASE || 
   (window.location.origin.includes('5173') ? 'http://localhost:8000/api/v1' : `${window.location.origin}/api/v1`);
 
-export default function Topbar({ page, onSelectCourse }) {
+export default function Topbar({ page, onSelectCourse, onGoHome }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [courses, setCourses] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -53,10 +53,10 @@ export default function Topbar({ page, onSelectCourse }) {
 
   return (
     <header className="topbar">
-      <div className="topbar-logo">
+      <div className="topbar-logo" onClick={onGoHome}>
         {/* Logo mark */}
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <rect width="28" height="28" rx="7" fill="#1E5EF3"/>
+          <rect width="28" height="28" rx="7" fill="var(--brand)"/>
           <path d="M8 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
           <circle cx="14" cy="18" r="3" fill="#fff"/>
         </svg>

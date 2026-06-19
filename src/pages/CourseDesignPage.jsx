@@ -1,31 +1,10 @@
 import { useState, useRef } from 'react';
 import {
-  IconUserPlus, IconShield, IconZap, IconUpload, IconCheck
+  IconZap, IconUpload, IconCheck
 } from '../icons';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 
   (window.location.origin.includes('5173') ? 'http://localhost:8000/api/v1' : `${window.location.origin}/api/v1`);
-
-const blueprints = [
-  {
-    id: 'onboarding',
-    icon: <IconUserPlus size={24} />,
-    label: 'Onboarding',
-    desc: 'New hire journey & culture',
-  },
-  {
-    id: 'compliance',
-    icon: <IconShield size={24} />,
-    label: 'Compliance',
-    desc: 'Legal standards & safety',
-  },
-  {
-    id: 'skill-crash',
-    icon: <IconZap size={24} />,
-    label: 'Skill-Crash',
-    desc: 'High-intensity technical training',
-  },
-];
 
 const learningTimes = ['Quick Bite (5-10 mins)', 'Standard (15-20 mins)', 'Deep Dive (30+ mins)'];
 const proficiencyLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
@@ -58,7 +37,6 @@ function FileIcon({ ext }) {
 }
 
 export default function CourseDesignPage({ onGenerate }) {
-  const [selected, setSelected] = useState('onboarding');
   const [learningTime, setLearningTime] = useState('Deep Dive (30+ mins)');
   const [proficiency, setProficiency] = useState('Intermediate');
   const [tone, setTone] = useState('Professional & Authoritative');
@@ -188,7 +166,7 @@ export default function CourseDesignPage({ onGenerate }) {
       prompt: prompt || '',
       audience: audience || '',
       voice: voice,
-      blueprint: selected,
+      blueprint: 'standard',
       duration: learningTime,
       level: proficiency,
       tone: tone,
@@ -225,32 +203,11 @@ export default function CourseDesignPage({ onGenerate }) {
       <div className="design-grid">
         {/* Left column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* Section 1: Blueprint */}
-          <div className="card">
-            <div className="card-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              1. Course Objective / Blueprint Type
-            </div>
-            <div className="blueprint-grid">
-              {blueprints.map(bp => (
-                <div
-                  key={bp.id}
-                  className={`blueprint-card${selected === bp.id ? ' selected' : ''}`}
-                  onClick={() => setSelected(bp.id)}
-                >
-                  {bp.icon}
-                  <h4>{bp.label}</h4>
-                  <p>{bp.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Section 2: Core Context */}
+          {/* Section 1: Core Context */}
           <div className="card">
             <div className="card-title">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="13" y1="18" x2="3" y2="18"/></svg>
-              2. Core Context
+              1. Core Context
             </div>
 
             <div className="form-group">
@@ -367,11 +324,11 @@ export default function CourseDesignPage({ onGenerate }) {
 
         {/* Right column */}
         <div className="side-column">
-          {/* Section 3: Parameters */}
+          {/* Section 2: Parameters */}
           <div className="card">
             <div className="card-title">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-              3. Parameters
+              2. Parameters
             </div>
 
             <div className="param-group">
@@ -406,11 +363,11 @@ export default function CourseDesignPage({ onGenerate }) {
             </div>
           </div>
 
-          {/* Section 4: Deliverables */}
+          {/* Section 3: Deliverables */}
           <div className="card">
             <div className="card-title">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-              4. Deliverables
+              3. Deliverables
             </div>
             {deliverables.map(d => (
               <div key={d.id} className="checkbox-item" onClick={() => toggleDeliverable(d.id)}>

@@ -200,18 +200,18 @@ export default function CourseViewerPage({ jobId, onBack }) {
           <div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginBottom: 24 }}>
               {/* Slide Deck Area */}
-              <div className="slide-deck-container" style={{ width: '100%', aspectRatio: '16/9', maxHeight: '75vh', background: '#DBEAFE', borderRadius: 12, padding: 40, color: '#0F1728', display: 'flex', flexDirection: 'column', position: 'relative', border: '1px solid #C8D4E8', boxShadow: '0 10px 30px rgba(30,94,243,0.1)', overflow: 'hidden' }}>
+              <div className="slide-deck-container" style={{ width: '100%', aspectRatio: '16/9', maxHeight: '75vh', background: '#FFEDD5', borderRadius: 12, padding: 40, color: '#0F1728', display: 'flex', flexDirection: 'column', position: 'relative', border: '1px solid #FED7AA', boxShadow: '0 10px 30px rgba(249,115,22,0.1)', overflow: 'hidden' }}>
                 {currentFlashcards && currentFlashcards.cards?.length > 0 && (
                   <div style={{ display: 'flex', gap: 10, marginBottom: 20, zIndex: 20, position: 'relative' }}>
                     <button 
                       onClick={() => setLeftTab('slides')}
-                      style={{ background: leftTab === 'slides' ? '#1E5EF3' : 'transparent', color: leftTab === 'slides' ? '#fff' : '#5C6B85', border: '1px solid #1E5EF3', padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
+                      style={{ background: leftTab === 'slides' ? '#F97316' : 'transparent', color: leftTab === 'slides' ? '#fff' : '#5C6B85', border: '1px solid #F97316', padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
                     >
                       Slides
                     </button>
                     <button 
                       onClick={() => setLeftTab('flashcards')}
-                      style={{ background: leftTab === 'flashcards' ? '#1E5EF3' : 'transparent', color: leftTab === 'flashcards' ? '#fff' : '#5C6B85', border: '1px solid #1E5EF3', padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
+                      style={{ background: leftTab === 'flashcards' ? '#F97316' : 'transparent', color: leftTab === 'flashcards' ? '#fff' : '#5C6B85', border: '1px solid #F97316', padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
                     >
                       Flashcards
                     </button>
@@ -265,13 +265,13 @@ export default function CourseViewerPage({ jobId, onBack }) {
                           {currentSegment.slide_title || currentLesson.title}
                         </h2>
                         {currentSegment.table_data?.headers?.length > 0 ? (
-                          <div style={{ overflowX: 'auto', borderRadius: 10, boxShadow: '0 2px 12px rgba(30,94,243,0.12)' }}>
+                          <div style={{ overflowX: 'auto', borderRadius: 10, boxShadow: '0 2px 12px rgba(249,115,22,0.12)' }}>
                             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '1rem' }}>
                               <thead>
                                 <tr>
                                   {currentSegment.table_data.headers.map((h, i) => (
                                     <th key={i} style={{
-                                      background: '#1E3A6E',
+                                      background: '#9A3412',
                                       color: '#fff',
                                       padding: '12px 16px',
                                       textAlign: 'left',
@@ -292,8 +292,8 @@ export default function CourseViewerPage({ jobId, onBack }) {
                                       <td key={ci} style={{
                                         padding: '10px 16px',
                                         color: '#0F1728',
-                                        borderBottom: '1px solid rgba(30,94,243,0.08)',
-                                        borderRight: ci < row.length - 1 ? '1px solid rgba(30,94,243,0.08)' : 'none',
+                                        borderBottom: '1px solid rgba(249,115,22,0.08)',
+                                        borderRight: ci < row.length - 1 ? '1px solid rgba(249,115,22,0.08)' : 'none',
                                         fontSize: '0.95rem',
                                         lineHeight: 1.5
                                       }}>
@@ -407,7 +407,7 @@ export default function CourseViewerPage({ jobId, onBack }) {
             {currentLesson.lesson_essay ? (
               <div style={{ marginTop: 8, background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0', padding: '28px 32px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                  <div style={{ width: 4, height: 24, borderRadius: 2, background: 'var(--brand, #1E5EF3)' }} />
+                  <div style={{ width: 4, height: 24, borderRadius: 2, background: 'var(--brand, #F97316)' }} />
                   <h4 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#0f172a', letterSpacing: '-0.01em' }}>
                     Lesson Deep-Dive
                   </h4>
@@ -420,7 +420,7 @@ export default function CourseViewerPage({ jobId, onBack }) {
               </div>
             ) : currentLesson.key_takeaways?.length > 0 ? (
               /* Fallback for older courses that have no lesson_essay yet */
-              <div className="key-takeaways" style={{ background: '#eff6ff', padding: 20, borderRadius: 8 }}>
+              <div className="key-takeaways" style={{ background: '#FFF7ED', padding: 20, borderRadius: 8 }}>
                 <h4>Key Takeaways</h4>
                 <ul style={{ marginTop: 10, paddingLeft: 20 }}>
                   {currentLesson.key_takeaways.map((tk, i) => <li key={i} style={{marginBottom: 5}}>{tk}</li>)}
@@ -462,8 +462,8 @@ export default function CourseViewerPage({ jobId, onBack }) {
                         border = '1px solid #f87171';
                       }
                     } else if (isSelected) {
-                      bg = '#eff6ff'; // selected option before submit is blue
-                      border = '1px solid #3b82f6';
+                      bg = '#FFF7ED'; // selected option before submit is blue
+                      border = '1px solid #F97316';
                     }
                     
                     return (
