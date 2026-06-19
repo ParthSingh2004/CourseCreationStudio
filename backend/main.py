@@ -31,7 +31,9 @@ allowed_origins = [
 ]
 env_origins = os.getenv("ALLOWED_ORIGINS")
 if env_origins:
-    allowed_origins.extend([o.strip() for o in env_origins.split(",") if o.strip()])
+    allowed_origins.extend([o.strip().rstrip('/') for o in env_origins.split(",") if o.strip()])
+
+print(f"--- ALLOWED CORS ORIGINS: {allowed_origins} ---", flush=True)
 
 app.add_middleware(
     CORSMiddleware,
