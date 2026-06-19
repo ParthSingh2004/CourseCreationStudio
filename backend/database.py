@@ -13,7 +13,11 @@ os.makedirs(Config.AUDIO_OUTPUT_DIR, exist_ok=True)
 os.makedirs(Config.IMAGE_OUTPUT_DIR, exist_ok=True)
 os.makedirs(Config.DOCS_DIR, exist_ok=True)
 
-engine = create_engine(Config.DB_PATH, connect_args={"check_same_thread": False})
+connect_args = {}
+if Config.DB_PATH.startswith("sqlite"):
+    connect_args["check_same_thread"] = False
+
+engine = create_engine(Config.DB_PATH, connect_args=connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

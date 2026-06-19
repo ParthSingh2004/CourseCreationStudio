@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
@@ -88,7 +88,20 @@ async def stream_generation(job_id: str):
 
 @router.get("/course/{course_id}")
 async def get_course(course_id: str):
-    # Try fetching from DB first, fallback to file if needed (we'll just use the file for now as it's perfectly in sync)
+    # Try fetching from DB first
+    from database import SessionLocal
+    from models.orm import CourseModel
+    db = SessionLocal()
+    try:
+        db_course = db.query(CourseModel).filter(CourseModel.id == course_id).first()
+        if db_course and db_course.json_content:
+            return Response(content=db_course.json_content, media_type="application/json")
+    except Exception as e:
+        print(f"Error fetching course from DB: {e}")
+    finally:
+        db.close()
+
+    # Fallback to file if needed (we'll just use the file for now as it's perfectly in sync)
     path = os.path.join(Config.COURSE_OUTPUT_DIR, f"{course_id}.json")
     if os.path.exists(path):
         return FileResponse(path, media_type="application/json")

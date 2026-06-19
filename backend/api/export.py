@@ -17,12 +17,27 @@ router = APIRouter()
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 def _load_course(course_id: str) -> GeneratedCourse:
-    """Load a GeneratedCourse from the saved JSON file, or raise 404."""
+    """Load a GeneratedCourse from the database (fallback to JSON file), or raise 404."""
+    # Try fetching from DB first
+    from database import SessionLocal
+    from models.orm import CourseModel
+    db = SessionLocal()
+    try:
+        db_course = db.query(CourseModel).filter(CourseModel.id == course_id).first()
+        if db_course and db_course.json_content:
+            return GeneratedCourse.model_validate_json(db_course.json_content)
+    except Exception as e:
+        print(f"Error loading course {course_id} from DB: {e}")
+    finally:
+        db.close()
+
+    # Fallback to local JSON file
     path = os.path.join(Config.COURSE_OUTPUT_DIR, f"{course_id}.json")
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="Course not found")
     with open(path, "r", encoding="utf-8") as f:
         return GeneratedCourse.model_validate_json(f.read())
+
 
 
 # ── image proxy (unchanged) ───────────────────────────────────────────────────

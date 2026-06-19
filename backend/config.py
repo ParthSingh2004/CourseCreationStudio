@@ -37,7 +37,14 @@ class Config:
     DATA_ROOT = os.getenv("COURSE_ENGINE_DATA_ROOT", _default_data_root)
     
     # Database
-    DB_PATH = f"sqlite:///{os.path.join(DATA_ROOT, 'course_engine.db')}"
+    _db_url = os.getenv("DATABASE_URL")
+    if _db_url:
+        # SQLAlchemy requires postgresql:// instead of postgres://
+        if _db_url.startswith("postgres://"):
+            _db_url = _db_url.replace("postgres://", "postgresql://", 1)
+        DB_PATH = _db_url
+    else:
+        DB_PATH = f"sqlite:///{os.path.join(DATA_ROOT, 'course_engine.db')}"
     
     # Media paths
     OUTPUT_DIR = os.path.join(DATA_ROOT, "media")
