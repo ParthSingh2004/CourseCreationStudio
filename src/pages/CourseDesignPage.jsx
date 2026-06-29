@@ -359,6 +359,8 @@ export default function CourseDesignPage({ onGenerate }) {
                 <option value="en-US-GuyNeural">US Male (Guy)</option>
                 <option value="en-GB-SoniaNeural">UK Female (Sonia)</option>
                 <option value="en-GB-RyanNeural">UK Male (Ryan)</option>
+                <option value="en-IN-NeerjaNeural">India Female (Neerja)</option>
+                <option value="en-IN-PrabhatNeural">India Male (Prabhat)</option>
               </select>
             </div>
           </div>
