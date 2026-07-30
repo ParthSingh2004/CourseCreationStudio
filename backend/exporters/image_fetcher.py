@@ -5,38 +5,9 @@ from config import Config
 
 
 def fetch_unsplash_image(query: str, width: int = 800) -> Optional[bytes]:
-    """
-    Fetch a topic-relevant photo for a slide.
-
-    Strategy (two-tier with automatic fallback):
-      1. Unsplash /photos/random API — preferred (high quality, keyword-relevant).
-         Requires UNSPLASH_ACCESS_KEY in .env.
-         If the key is missing, rate-limited (403), or the request fails for
-         any reason we fall through to the next tier automatically.
-      2. LoremFlickr — free, no API key needed, keyword-aware CC-licensed photos.
-         URL format: https://loremflickr.com/1080/720/{keyword1,keyword2,...}
-         Used as a silent fallback whenever Unsplash cannot supply an image.
-
-    Returns raw JPEG/PNG bytes on success, None if both tiers fail.
-    Never raises — designed to fail silently so slide_builder can fall back
-    to a text-only layout without crashing the pipeline.
-    """
-    if not query or not query.strip():
-        print("[image_fetcher] ⚠ Skipping fetch — query is empty.")
-        return None
-
-    # ── Tier 1: Unsplash ──────────────────────────────────────────────────────
-    access_key = Config.UNSPLASH_ACCESS_KEY
-    if access_key:
-        result = _try_unsplash(query.strip(), access_key)
-        if result:
-            return result
-        print("[image_fetcher] ↳ Unsplash unavailable — trying LoremFlickr fallback.")
-    else:
-        print("[image_fetcher] ⚠ UNSPLASH_ACCESS_KEY not set — going straight to LoremFlickr.")
-
-    # ── Tier 2: LoremFlickr (no key required) ─────────────────────────────────
-    return _try_loremflickr(query.strip())
+    """Image fetching is currently disabled."""
+    print("[image_fetcher] Image fetching is disabled.")
+    return None
 
 
 # ── Unsplash helper ───────────────────────────────────────────────────────────
