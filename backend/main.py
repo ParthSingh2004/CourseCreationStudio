@@ -6,7 +6,7 @@ import sys
 # Limit the integer string conversion limit (fixes error with huge numbers in LLM JSON, avoids DoS)
 sys.set_int_max_str_digits(50000)
 
-from api import upload, generate, export, enhance
+from api import upload, generate, export, enhance, avatar
 from config import Config
 from database import engine, Base
 import models.orm
@@ -47,6 +47,7 @@ app.include_router(upload.router, prefix="/api/v1")
 app.include_router(generate.router, prefix="/api/v1")
 app.include_router(export.router, prefix="/api/v1/export")
 app.include_router(enhance.router, prefix="/api/v1")
+app.include_router(avatar.router, prefix="/api/v1")
 
 @app.get("/health")
 def health_check():

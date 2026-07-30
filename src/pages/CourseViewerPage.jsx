@@ -26,6 +26,12 @@ export default function CourseViewerPage({ jobId, onBack }) {
   const [imageFailed, setImageFailed] = useState(false);
   const [downloading, setDownloading] = useState({ slides: false, quizPdf: false, summaryPdf: false });
 
+  // D-ID Avatar State
+  const [avatarVideoUrl, setAvatarVideoUrl] = useState('');
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [avatarError, setAvatarError] = useState('');
+  const [presenterVoice, setPresenterVoice] = useState('amy');
+
   useEffect(() => {
     if (!jobId) {
       setLoading(false);
@@ -60,6 +66,8 @@ export default function CourseViewerPage({ jobId, onBack }) {
   
   useEffect(() => {
     setActiveSegmentIndex(0);
+    setAvatarVideoUrl('');
+    setAvatarError('');
   }, [activeLessonIndex, activeModuleIndex]);
 
   useEffect(() => {
@@ -80,6 +88,32 @@ export default function CourseViewerPage({ jobId, onBack }) {
     setSelectedAnswers({});
     setQuizSubmitted(false);
   }, [activeModuleIndex, activeTab]);
+
+  const handleGenerateAvatar = async (presenter = presenterVoice) => {
+    setAvatarLoading(true);
+    setAvatarError('');
+    try {
+      const textToNarrate = currentSegment?.narration || currentLesson?.title || 'Welcome to this lesson.';
+      const res = await fetch(`${API_BASE}/avatar/narrate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: textToNarrate, presenter })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.detail || 'Avatar generation failed');
+      }
+      if (data.video_url) {
+        setAvatarVideoUrl(data.video_url);
+      } else {
+        throw new Error('No video URL returned');
+      }
+    } catch (err) {
+      setAvatarError(err.message || 'Failed to generate avatar');
+    } finally {
+      setAvatarLoading(false);
+    }
+  };
 
   if (loading) return <div style={{padding: 40}}>Loading course data...</div>;
   if (!courseData) return <div style={{padding: 40}}>Course data not found. Please start a new generation.</div>;
@@ -264,22 +298,29 @@ export default function CourseViewerPage({ jobId, onBack }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginBottom: 24 }}>
               {/* Slide Deck Area */}
               <div className="slide-deck-container" style={{ width: '100%', aspectRatio: '16/9', maxHeight: '75vh', background: '#FFEDD5', borderRadius: 12, padding: 40, color: '#0F1728', display: 'flex', flexDirection: 'column', position: 'relative', border: '1px solid #FED7AA', boxShadow: '0 10px 30px rgba(249,115,22,0.1)', overflow: 'hidden' }}>
-                {currentFlashcards && currentFlashcards.cards?.length > 0 && (
-                  <div style={{ display: 'flex', gap: 10, marginBottom: 20, zIndex: 20, position: 'relative' }}>
-                    <button 
-                      onClick={() => setLeftTab('slides')}
-                      style={{ background: leftTab === 'slides' ? '#F97316' : 'transparent', color: leftTab === 'slides' ? '#fff' : '#5C6B85', border: '1px solid #F97316', padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
-                    >
-                      Slides
-                    </button>
+                {/* Tab header buttons */}
+                <div style={{ display: 'flex', gap: 10, marginBottom: 20, zIndex: 20, position: 'relative' }}>
+                  <button 
+                    onClick={() => setLeftTab('slides')}
+                    style={{ background: leftTab === 'slides' ? '#F97316' : 'transparent', color: leftTab === 'slides' ? '#fff' : '#5C6B85', border: '1px solid #F97316', padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
+                  >
+                    Slides
+                  </button>
+                  {currentFlashcards && currentFlashcards.cards?.length > 0 && (
                     <button 
                       onClick={() => setLeftTab('flashcards')}
                       style={{ background: leftTab === 'flashcards' ? '#F97316' : 'transparent', color: leftTab === 'flashcards' ? '#fff' : '#5C6B85', border: '1px solid #F97316', padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
                     >
                       Flashcards
                     </button>
-                  </div>
-                )}
+                  )}
+                  <button 
+                    onClick={() => setLeftTab('avatar')}
+                    style={{ background: leftTab === 'avatar' ? '#F97316' : 'transparent', color: leftTab === 'avatar' ? '#fff' : '#5C6B85', border: '1px solid #F97316', padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
+                  >
+                    🎭 AI Avatar Presenter
+                  </button>
+                </div>
 
                 {leftTab === 'slides' ? (
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -328,40 +369,20 @@ export default function CourseViewerPage({ jobId, onBack }) {
                           {currentSegment.slide_title || currentLesson.title}
                         </h2>
                         {currentSegment.table_data?.headers?.length > 0 ? (
-                          <div style={{ overflowX: 'auto', borderRadius: 10, boxShadow: '0 2px 12px rgba(249,115,22,0.12)' }}>
-                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '1rem' }}>
+                          <div style={{ overflowX: 'auto', background: '#fff', borderRadius: 8, border: '1px solid #FED7AA', padding: 12 }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
                               <thead>
-                                <tr>
-                                  {currentSegment.table_data.headers.map((h, i) => (
-                                    <th key={i} style={{
-                                      background: '#9A3412',
-                                      color: '#fff',
-                                      padding: '12px 16px',
-                                      textAlign: 'left',
-                                      fontWeight: 700,
-                                      fontSize: '0.95rem',
-                                      letterSpacing: '0.03em',
-                                      borderRight: i < currentSegment.table_data.headers.length - 1 ? '1px solid rgba(255,255,255,0.15)' : 'none'
-                                    }}>
-                                      {h}
-                                    </th>
+                                <tr style={{ background: '#FFF7ED', borderBottom: '2px solid #FDBA74' }}>
+                                  {currentSegment.table_data.headers.map((h, idx) => (
+                                    <th key={idx} style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 700, color: '#C2410C' }}>{h}</th>
                                   ))}
                                 </tr>
                               </thead>
                               <tbody>
-                                {currentSegment.table_data.rows.map((row, ri) => (
-                                  <tr key={ri} style={{ background: ri % 2 === 0 ? 'rgba(255,255,255,0.55)' : 'rgba(219,234,254,0.45)' }}>
-                                    {row.map((cell, ci) => (
-                                      <td key={ci} style={{
-                                        padding: '10px 16px',
-                                        color: '#0F1728',
-                                        borderBottom: '1px solid rgba(249,115,22,0.08)',
-                                        borderRight: ci < row.length - 1 ? '1px solid rgba(249,115,22,0.08)' : 'none',
-                                        fontSize: '0.95rem',
-                                        lineHeight: 1.5
-                                      }}>
-                                        {cell}
-                                      </td>
+                                {currentSegment.table_data.rows?.map((row, rIdx) => (
+                                  <tr key={rIdx} style={{ borderBottom: '1px solid #FFEDD5' }}>
+                                    {row.map((cell, cIdx) => (
+                                      <td key={cIdx} style={{ padding: '8px 12px', color: '#18181B' }}>{cell}</td>
                                     ))}
                                   </tr>
                                 ))}
@@ -397,7 +418,7 @@ export default function CourseViewerPage({ jobId, onBack }) {
                       </>
                     )}
                   </div>
-                ) : (
+                ) : leftTab === 'flashcards' ? (
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                     <div 
                       className={`flashcard-scene ${isFlipped ? 'is-flipped' : ''}`}
@@ -407,12 +428,12 @@ export default function CourseViewerPage({ jobId, onBack }) {
                       <div className="flashcard-inner">
                         <div className="flashcard-face flashcard-front" style={{ fontSize: 24 }}>
                           <span className="flashcard-text">
-                            {currentFlashcards.cards[activeFlashcardIndex].front}
+                            {currentFlashcards?.cards?.[activeFlashcardIndex]?.front}
                           </span>
                         </div>
                         <div className="flashcard-face flashcard-back" style={{ fontSize: 24 }}>
                           <span className="flashcard-text">
-                            {currentFlashcards.cards[activeFlashcardIndex].back}
+                            {currentFlashcards?.cards?.[activeFlashcardIndex]?.back}
                           </span>
                         </div>
                       </div>
@@ -431,16 +452,73 @@ export default function CourseViewerPage({ jobId, onBack }) {
                         <IconArrowLeft size={16} />
                       </button>
                       <span style={{ fontSize: 14, alignSelf: 'center', color: '#cbd5e1', fontWeight: 600 }}>
-                        {activeFlashcardIndex + 1} / {currentFlashcards.cards.length}
+                        {activeFlashcardIndex + 1} / {currentFlashcards?.cards?.length || 1}
                       </span>
                       <button 
-                        disabled={activeFlashcardIndex === currentFlashcards.cards.length - 1} 
+                        disabled={activeFlashcardIndex === (currentFlashcards?.cards?.length || 1) - 1} 
                         onClick={() => setActiveFlashcardIndex(prev => prev + 1)}
-                        style={{ background: '#334155', border: 'none', color: '#fff', padding: '6px 12px', borderRadius: 6, cursor: activeFlashcardIndex === currentFlashcards.cards.length - 1 ? 'not-allowed' : 'pointer', opacity: activeFlashcardIndex === currentFlashcards.cards.length - 1 ? 0.4 : 1 }}
+                        style={{ background: '#334155', border: 'none', color: '#fff', padding: '6px 12px', borderRadius: 6, cursor: activeFlashcardIndex === (currentFlashcards?.cards?.length || 1) - 1 ? 'not-allowed' : 'pointer', opacity: activeFlashcardIndex === (currentFlashcards?.cards?.length || 1) - 1 ? 0.4 : 1 }}
                       >
                         <IconArrowRight size={16} />
                       </button>
                     </div>
+                  </div>
+                ) : (
+                  /* ── D-ID AI AVATAR PRESENTER TAB ───────────────────────── */
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
+                    {avatarVideoUrl ? (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <video 
+                          src={avatarVideoUrl} 
+                          controls 
+                          autoPlay 
+                          style={{ maxWidth: '100%', maxHeight: '80%', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }} 
+                        />
+                        <button 
+                          onClick={() => handleGenerateAvatar()}
+                          style={{ marginTop: 12, background: 'transparent', color: '#C2410C', border: '1px solid #FDBA74', padding: '6px 14px', borderRadius: 20, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}
+                        >
+                          🔄 Re-generate Avatar Video
+                        </button>
+                      </div>
+                    ) : avatarLoading ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
+                        <div style={{ fontSize: 40, animation: 'spin 1.5s infinite linear' }}>🎭</div>
+                        <div style={{ fontSize: 18, fontWeight: 700, color: '#0F1728' }}>Generating AI Avatar Presenter...</div>
+                        <div style={{ fontSize: 13, color: '#5C6B85' }}>D-ID Studio is rendering your talking avatar video (~5-10s).</div>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, textAlign: 'center', maxWidth: 480 }}>
+                        <div style={{ fontSize: 48 }}>🎭</div>
+                        <div>
+                          <h3 style={{ fontSize: 20, fontWeight: 800, color: '#0F1728', marginBottom: 6 }}>D-ID AI Avatar Presenter</h3>
+                          <p style={{ fontSize: 13, color: '#5C6B85', lineHeight: 1.6 }}>
+                            Watch a live AI avatar narrate this lesson directly on your screen.
+                          </p>
+                        </div>
+                        <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 6 }}>
+                          <select 
+                            value={presenterVoice} 
+                            onChange={(e) => setPresenterVoice(e.target.value)}
+                            style={{ padding: '8px 12px', borderRadius: 8, border: '1.5px solid #FDBA74', fontSize: 13, background: '#fff', color: '#0F1728', fontWeight: 600 }}
+                          >
+                            <option value="amy">Amy (Female Presenter)</option>
+                            <option value="matt">Matt (Male Presenter)</option>
+                          </select>
+                          <button 
+                            onClick={() => handleGenerateAvatar(presenterVoice)}
+                            style={{ background: 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)', color: '#fff', border: 'none', padding: '9px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 700, fontSize: 13, boxShadow: '0 4px 14px rgba(249,115,22,0.3)' }}
+                          >
+                            Generate Avatar Video
+                          </button>
+                        </div>
+                        {avatarError && (
+                          <div style={{ color: '#DC2626', background: '#FEE2E2', border: '1px solid #FECACA', padding: '8px 14px', borderRadius: 8, fontSize: 12, width: '100%', marginTop: 8 }}>
+                            {avatarError}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
