@@ -63,13 +63,16 @@ def build_slides(course: GeneratedCourse) -> str:
  
         result = subprocess.run(
             cmd,
-            capture_output=False,   # let Node's stdout/stderr pass through
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
         )
  
         if result.returncode != 0:
+            err_msg = (result.stderr or result.stdout or "").strip()
+            print(f"[slide_builder] ERROR output:\n{err_msg}")
             raise RuntimeError(
-                f"slide_builder.js exited with code {result.returncode}"
+                f"slide_builder.js exited with code {result.returncode}: {err_msg}"
             )
  
         if not os.path.exists(output_path):

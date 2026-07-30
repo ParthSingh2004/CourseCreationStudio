@@ -1,0 +1,10 @@
+{
+  "name": "course-engine-backend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "pptxgenjs": "^4.0.1"
+  }
+}
