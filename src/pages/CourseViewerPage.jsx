@@ -472,11 +472,31 @@ export default function CourseViewerPage({ jobId, onBack }) {
                           src={avatarVideoUrl} 
                           controls 
                           autoPlay 
-                          style={{ maxWidth: '100%', maxHeight: '80%', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }} 
+                          style={{ maxWidth: '100%', maxHeight: '65%', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }} 
                         />
+                        {/* Live Captions / Read-Along Box */}
+                        <div style={{ 
+                          marginTop: 12, 
+                          width: '92%', 
+                          maxWidth: 680, 
+                          background: '#0F1728', 
+                          color: '#F8FAFC', 
+                          padding: '12px 18px', 
+                          borderRadius: 10, 
+                          border: '1.5px solid #FDBA74',
+                          boxShadow: '0 4px 16px rgba(249, 115, 22, 0.15)',
+                          textAlign: 'center'
+                        }}>
+                          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F97316', marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                            <span>💬 Live Captions / Read-Along</span>
+                          </div>
+                          <p style={{ fontSize: 13, lineHeight: 1.6, color: '#E2E8F0', margin: 0, fontWeight: 500 }}>
+                            "{currentSegment?.narration || currentLesson?.title || 'Welcome to this lesson.'}"
+                          </p>
+                        </div>
                         <button 
                           onClick={() => handleGenerateAvatar()}
-                          style={{ marginTop: 12, background: 'transparent', color: '#C2410C', border: '1px solid #FDBA74', padding: '6px 14px', borderRadius: 20, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}
+                          style={{ marginTop: 10, background: 'transparent', color: '#C2410C', border: '1px solid #FDBA74', padding: '4px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 11, fontWeight: 600 }}
                         >
                           🔄 Re-generate Avatar Video
                         </button>
