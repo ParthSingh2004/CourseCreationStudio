@@ -60,6 +60,15 @@ async def run_pipeline(params: dict, source_text: str, job_id: str) -> AsyncGene
                 content = await generate_full_content(params, course.outline, compressed_source)
                 course.content = content
                 
+                # Kick off background AI Avatar rendering for lessons if requested
+                if 'avatar' in content_types and course.content and course.content.lessons:
+                    try:
+                        from api.avatar import trigger_course_avatar_generation
+                        print(f"[orchestrator] Launching background D-ID AI Avatar tasks for course '{job_id}'...")
+                        trigger_course_avatar_generation(course)
+                    except Exception as avatar_err:
+                        print(f"[orchestrator] ⚠ Warning: Could not trigger avatar generation: {avatar_err}")
+
                 if course.content and course.content.lessons:
                     # Ensure the output directory exists before any writes (Bug #2 fix)
                     os.makedirs(Config.IMAGE_OUTPUT_DIR, exist_ok=True)

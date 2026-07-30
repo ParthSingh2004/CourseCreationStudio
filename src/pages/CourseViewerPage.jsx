@@ -28,6 +28,7 @@ export default function CourseViewerPage({ jobId, onBack }) {
 
   // D-ID Avatar State
   const [avatarVideoUrl, setAvatarVideoUrl] = useState('');
+  const [avatarStatus, setAvatarStatus] = useState('idle'); // 'idle' | 'rendering' | 'ready' | 'failed'
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [avatarError, setAvatarError] = useState('');
   const [presenterVoice, setPresenterVoice] = useState('amy');
@@ -68,7 +69,46 @@ export default function CourseViewerPage({ jobId, onBack }) {
     setActiveSegmentIndex(0);
     setAvatarVideoUrl('');
     setAvatarError('');
+    setAvatarStatus('idle');
   }, [activeLessonIndex, activeModuleIndex]);
+
+  // Background polling hook for active lesson avatar status
+  useEffect(() => {
+    if (!jobId || !activeModuleIndex || !activeLessonIndex) return;
+
+    let intervalId = null;
+
+    const checkAvatarStatus = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/avatar/status/${jobId}/${activeModuleIndex}/${activeLessonIndex}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        if (data.status === 'ready' && data.video_url) {
+          setAvatarVideoUrl(data.video_url);
+          setAvatarStatus('ready');
+          setAvatarLoading(false);
+          if (intervalId) clearInterval(intervalId);
+        } else if (data.status === 'rendering' || data.status === 'not_started') {
+          setAvatarStatus('rendering');
+        } else if (data.status === 'failed') {
+          setAvatarStatus('failed');
+          setAvatarError(data.error || 'Avatar rendering encountered an issue');
+          setAvatarLoading(false);
+          if (intervalId) clearInterval(intervalId);
+        }
+      } catch (e) {
+        console.error("Avatar status polling error:", e);
+      }
+    };
+
+    checkAvatarStatus();
+    intervalId = setInterval(checkAvatarStatus, 3000);
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [jobId, activeModuleIndex, activeLessonIndex, leftTab]);
 
   useEffect(() => {
     setImageFailed(false);
@@ -92,12 +132,19 @@ export default function CourseViewerPage({ jobId, onBack }) {
   const handleGenerateAvatar = async (presenter = presenterVoice) => {
     setAvatarLoading(true);
     setAvatarError('');
+    setAvatarStatus('rendering');
     try {
       const textToNarrate = currentSegment?.narration || currentLesson?.title || 'Welcome to this lesson.';
       const res = await fetch(`${API_BASE}/avatar/narrate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: textToNarrate, presenter })
+        body: JSON.stringify({ 
+          text: textToNarrate, 
+          presenter,
+          course_id: jobId,
+          module_idx: activeModuleIndex,
+          lesson_idx: activeLessonIndex
+        })
       });
       const data = await res.json();
       if (!res.ok) {
@@ -105,11 +152,11 @@ export default function CourseViewerPage({ jobId, onBack }) {
       }
       if (data.video_url) {
         setAvatarVideoUrl(data.video_url);
-      } else {
-        throw new Error('No video URL returned');
+        setAvatarStatus('ready');
       }
     } catch (err) {
       setAvatarError(err.message || 'Failed to generate avatar');
+      setAvatarStatus('failed');
     } finally {
       setAvatarLoading(false);
     }
@@ -503,11 +550,34 @@ export default function CourseViewerPage({ jobId, onBack }) {
                           🔄 Re-generate Avatar Video
                         </button>
                       </div>
-                    ) : avatarLoading ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
-                        <div style={{ fontSize: 40, animation: 'spin 1.5s infinite linear' }}>🎭</div>
-                        <div style={{ fontSize: 18, fontWeight: 700, color: '#0F1728' }}>Generating AI Avatar Presenter...</div>
-                        <div style={{ fontSize: 13, color: '#5C6B85' }}>D-ID Studio is rendering your talking avatar video (~5-10s).</div>
+                    ) : (avatarStatus === 'rendering' || avatarLoading) ? (
+                      /* Rendering state — NO dropdowns or generate buttons! */
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, textAlign: 'center', maxWidth: 500 }}>
+                        <div style={{ fontSize: 44, animation: 'spin 1.8s infinite linear' }}>🎭</div>
+                        <div>
+                          <h3 style={{ fontSize: 19, fontWeight: 800, color: '#0F1728', marginBottom: 6 }}>Generating AI Avatar Presenter...</h3>
+                          <p style={{ fontSize: 13, color: '#5C6B85', lineHeight: 1.6 }}>
+                            Your D-ID AI Avatar Presenter is being rendered in the background.<br />
+                            It will appear here automatically as soon as rendering completes.
+                          </p>
+                        </div>
+                        <div style={{ fontSize: 11, color: '#94A3B8', fontStyle: 'italic', marginTop: 4 }}>
+                          ⚡ Polling background status...
+                        </div>
+                      </div>
+                    ) : avatarStatus === 'failed' ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, textAlign: 'center', maxWidth: 480 }}>
+                        <div style={{ fontSize: 40 }}>⚠️</div>
+                        <h3 style={{ fontSize: 18, fontWeight: 800, color: '#0F1728' }}>Avatar Generation Issue</h3>
+                        <div style={{ color: '#DC2626', background: '#FEE2E2', border: '1px solid #FECACA', padding: '10px 16px', borderRadius: 8, fontSize: 12, width: '100%' }}>
+                          {avatarError || 'D-ID rendering encountered an issue or timed out.'}
+                        </div>
+                        <button 
+                          onClick={() => handleGenerateAvatar(presenterVoice)}
+                          style={{ background: 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)', color: '#fff', border: 'none', padding: '9px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 700, fontSize: 13 }}
+                        >
+                          Retry Generation
+                        </button>
                       </div>
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, textAlign: 'center', maxWidth: 480 }}>
