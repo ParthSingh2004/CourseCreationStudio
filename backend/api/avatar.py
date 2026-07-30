@@ -13,8 +13,8 @@ class NarrateRequest(BaseModel):
     presenter: str = "amy"  # "amy" or "matt"
 
 DEFAULT_PRESENTERS = {
-    "amy": "https://create-images-results.d-id.com/DefaultPresenters/Amy_f/v2_image.jpeg",
-    "matt": "https://create-images-results.d-id.com/DefaultPresenters/Matt_m/v2_image.jpeg",
+    "amy": "https://clips-presenters.d-id.com/amy/image.png",
+    "matt": "https://clips-presenters.d-id.com/matt/image.png",
 }
 
 def get_d_id_auth_header() -> dict:
