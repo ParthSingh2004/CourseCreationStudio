@@ -36,3 +36,5 @@ __pycache__/
 venv/
 ENV/
 env/
+test_did.py
+test_*.py
