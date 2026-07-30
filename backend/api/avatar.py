@@ -173,13 +173,31 @@ def trigger_course_avatar_generation(course, presenter: str = "amy"):
 async def get_avatar_status(course_id: str, module_idx: int, lesson_idx: int):
     """
     Get background rendering status for a specific lesson avatar.
-    Returns {"status": "rendering"|"ready"|"failed"|"not_started", "video_url": "..."}
+    Returns {"status": "rendering"|"ready"|"failed", "video_url": "..."}
     """
     lesson_key = f"{course_id}_{module_idx}_{lesson_idx}"
     job_info = AVATAR_JOBS.get(lesson_key)
     
     if not job_info:
-        return {"status": "not_started", "video_url": "", "error": ""}
+        api_key = os.getenv("D_ID_API_KEY", "").strip()
+        if not api_key:
+            return {"status": "failed", "error": "D_ID_API_KEY is not configured in Render environment.", "video_url": ""}
+            
+        try:
+            from api.export import _load_course
+            course = _load_course(course_id)
+            if course and course.content and course.content.lessons:
+                lesson = next((l for l in course.content.lessons if l.module_index == module_idx and l.lesson_index == lesson_idx), None)
+                if lesson:
+                    narration_parts = [s.narration for s in lesson.segments if s.narration and s.narration.strip()]
+                    text_to_narrate = " ".join(narration_parts) if narration_parts else lesson.title
+                    AVATAR_JOBS[lesson_key] = {"status": "rendering", "video_url": "", "error": ""}
+                    asyncio.create_task(generate_avatar_task(lesson_key, text_to_narrate, "amy"))
+                    return {"status": "rendering", "video_url": "", "error": ""}
+        except Exception as e:
+            print(f"[avatar_status] Auto-start info: {e}")
+            
+        return {"status": "failed", "error": "Avatar task not found.", "video_url": ""}
         
     return job_info
 
