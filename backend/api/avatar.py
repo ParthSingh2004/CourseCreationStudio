@@ -70,10 +70,10 @@ async def generate_avatar_task(lesson_key: str, text_content: str, presenter: st
             "accept": "application/json"
         }
 
-        # Truncate long text for speed & credit safety
+        # Truncate text for ultra-fast 10-15 second demo video (~150 chars)
         clean_text = text_content.strip()
-        if len(clean_text) > 450:
-            clean_text = clean_text[:447] + "..."
+        if len(clean_text) > 160:
+            clean_text = clean_text[:157] + "..."
 
         source_url = DEFAULT_PRESENTERS.get(presenter.lower(), DEFAULT_PRESENTERS["amy"])
 
@@ -115,10 +115,12 @@ async def generate_avatar_task(lesson_key: str, text_content: str, presenter: st
             AVATAR_JOBS[lesson_key] = {"status": "failed", "error": "No talk_id returned by D-ID"}
             return
 
-        # Poll D-ID for up to 90 seconds in the background
+        # Poll D-ID continuously until completion without any artificial timeout cutoff
         poll_url = f"https://api.d-id.com/talks/{talk_id}"
-        for _ in range(45):
+        poll_count = 0
+        while True:
             await asyncio.sleep(2)
+            poll_count += 1
             try:
                 poll_resp = await asyncio.to_thread(
                     requests.get,
@@ -132,7 +134,7 @@ async def generate_avatar_task(lesson_key: str, text_content: str, presenter: st
                     if st == "done":
                         video_url = status_data.get("result_url")
                         if video_url:
-                            print(f"[avatar_bg] ✓ Avatar ready for {lesson_key}: {video_url[:60]}...")
+                            print(f"[avatar_bg] ✓ Avatar ready for {lesson_key} after {poll_count*2}s: {video_url[:60]}...")
                             AVATAR_JOBS[lesson_key] = {"status": "ready", "video_url": video_url, "talk_id": talk_id}
                             return
                     elif st in ("error", "rejected"):
@@ -141,11 +143,9 @@ async def generate_avatar_task(lesson_key: str, text_content: str, presenter: st
                         AVATAR_JOBS[lesson_key] = {"status": "failed", "error": f"D-ID {st}: {err_detail}"}
                         return
                     else:
-                        print(f"[avatar_bg] Lesson {lesson_key} status: '{st}'")
+                        print(f"[avatar_bg] Lesson {lesson_key} status: '{st}' (poll #{poll_count})")
             except Exception as poll_e:
                 print(f"[avatar_bg] Warning during polling {lesson_key}: {poll_e}")
-
-        AVATAR_JOBS[lesson_key] = {"status": "failed", "error": "D-ID generation timed out after 90s"}
 
     except Exception as exc:
         print(f"[avatar_bg] ✗ Unexpected error generating avatar for {lesson_key}: {exc}")
@@ -154,21 +154,22 @@ async def generate_avatar_task(lesson_key: str, text_content: str, presenter: st
 def trigger_course_avatar_generation(course, presenter: str = "amy"):
     """
     Non-blocking helper called by orchestrator during course writing step.
-    Kicks off background avatar rendering tasks for each lesson.
+    Renders demo AI Avatar for Module 1, Lesson 1 only (1-shot demo mode).
     """
     if not course.content or not course.content.lessons:
         return
 
-    for lesson in course.content.lessons:
-        lesson_key = f"{course.course_id}_{lesson.module_index}_{lesson.lesson_index}"
-        
-        # Collect narration text from segments
-        narration_parts = [s.narration for s in lesson.segments if s.narration and s.narration.strip()]
-        text_to_narrate = " ".join(narration_parts) if narration_parts else lesson.title
-        
-        # Mark as rendering and spawn async background task
-        AVATAR_JOBS[lesson_key] = {"status": "rendering", "video_url": "", "error": ""}
-        asyncio.create_task(generate_avatar_task(lesson_key, text_to_narrate, presenter))
+    # Pick Module 1, Lesson 1 (or the first available lesson)
+    first_lesson = next((l for l in course.content.lessons if l.module_index == 1 and l.lesson_index == 1), course.content.lessons[0])
+    
+    lesson_key = f"{course.course_id}_{first_lesson.module_index}_{first_lesson.lesson_index}"
+    
+    narration_parts = [s.narration for s in first_lesson.segments if s.narration and s.narration.strip()]
+    text_to_narrate = " ".join(narration_parts) if narration_parts else first_lesson.title
+    
+    print(f"[avatar_bg] Triggering 1-shot demo avatar for Module 1 Lesson 1 ({lesson_key})...")
+    AVATAR_JOBS[lesson_key] = {"status": "rendering", "video_url": "", "error": ""}
+    asyncio.create_task(generate_avatar_task(lesson_key, text_to_narrate, presenter))
 
 
 @router.get("/avatar/status/{course_id}/{module_idx}/{lesson_idx}")
