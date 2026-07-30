@@ -62,7 +62,7 @@ async def generate_avatar_narration(req: NarrateRequest):
     payload = {
         "script": {
             "type": "text",
-            "subtitles": "true",
+            "subtitles": "false",
             "provider": {
                 "type": "microsoft",
                 "voice_id": "en-US-JennyNeural" if req.presenter.lower() == "amy" else "en-US-GuyNeural"
