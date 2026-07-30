@@ -135,11 +135,13 @@ async def generate_avatar_task(lesson_key: str, text_content: str, presenter: st
                             print(f"[avatar_bg] ✓ Avatar ready for {lesson_key}: {video_url[:60]}...")
                             AVATAR_JOBS[lesson_key] = {"status": "ready", "video_url": video_url, "talk_id": talk_id}
                             return
-                    elif st == "error":
-                        err_detail = str(status_data.get("error", "D-ID render error"))
-                        print(f"[avatar_bg] ✗ D-ID render error for {lesson_key}: {err_detail}")
-                        AVATAR_JOBS[lesson_key] = {"status": "failed", "error": err_detail}
+                    elif st in ("error", "rejected"):
+                        err_detail = status_data.get("error") or status_data.get("user_error") or f"D-ID status is '{st}'"
+                        print(f"[avatar_bg] ✗ D-ID {st} for {lesson_key}: {err_detail}")
+                        AVATAR_JOBS[lesson_key] = {"status": "failed", "error": f"D-ID {st}: {err_detail}"}
                         return
+                    else:
+                        print(f"[avatar_bg] Lesson {lesson_key} status: '{st}'")
             except Exception as poll_e:
                 print(f"[avatar_bg] Warning during polling {lesson_key}: {poll_e}")
 
