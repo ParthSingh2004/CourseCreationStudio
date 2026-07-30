@@ -14,7 +14,8 @@ const deliverables = [
   { id: 'text', label: 'Text Lessons', defaultChecked: true },
   { id: 'quizzes', label: 'Quizzes', defaultChecked: true },
   { id: 'flashcards', label: 'Flashcards', defaultChecked: false },
-  { id: 'audio', label: 'Audio', defaultChecked: false },
+  { id: 'audio', label: 'Audio Voiceover (TTS)', defaultChecked: false },
+  { id: 'avatar', label: 'AI Avatar Presenter (D-ID)', defaultChecked: false },
 ];
 
 function formatBytes(bytes) {
