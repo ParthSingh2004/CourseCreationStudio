@@ -18,7 +18,8 @@ from exporters.image_fetcher import fetch_unsplash_image
 async def run_pipeline(params: dict, source_text: str, job_id: str) -> AsyncGenerator:
     course = GeneratedCourse(
         course_id=job_id,
-        outline=CourseOutline(title="", description="", total_modules=0, modules=[])
+        outline=CourseOutline(title="", description="", total_modules=0, modules=[]),
+        params=params
     )
     
     content_types = params.get('content_types', [])

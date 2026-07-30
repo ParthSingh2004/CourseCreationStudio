@@ -417,7 +417,7 @@ async def generate_full_content(
     lessons array.
     """
     content_types = params.get('content_types', [])
-    include_audio = 'video' in content_types or 'audio' in content_types
+    include_audio = 'video' in content_types or 'audio' in content_types or 'avatar' in content_types
     include_quizzes = 'quizzes' in content_types
     include_flashcards = 'flashcards' in content_types
 

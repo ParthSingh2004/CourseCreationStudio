@@ -76,6 +76,7 @@ class GeneratedCourse(BaseModel):
     outline: CourseOutline
     content: Optional[FullCourseContent] = None
     audio: Optional[List[LessonAudio]] = None
+    params: Optional[dict] = None
     slide_path: Optional[str] = None
     quiz_pdf_path: Optional[str] = None
     summary_pdf_path: Optional[str] = None

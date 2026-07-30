@@ -314,12 +314,14 @@ export default function CourseViewerPage({ jobId, onBack }) {
                       Flashcards
                     </button>
                   )}
-                  <button 
-                    onClick={() => setLeftTab('avatar')}
-                    style={{ background: leftTab === 'avatar' ? '#F97316' : 'transparent', color: leftTab === 'avatar' ? '#fff' : '#5C6B85', border: '1px solid #F97316', padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
-                  >
-                    🎭 AI Avatar Presenter
-                  </button>
+                  {(!courseData.params?.content_types || courseData.params?.content_types?.includes('avatar')) && (
+                    <button 
+                      onClick={() => setLeftTab('avatar')}
+                      style={{ background: leftTab === 'avatar' ? '#F97316' : 'transparent', color: leftTab === 'avatar' ? '#fff' : '#5C6B85', border: '1px solid #F97316', padding: '6px 12px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
+                    >
+                      🎭 AI Avatar Presenter
+                    </button>
+                  )}
                 </div>
 
                 {leftTab === 'slides' ? (
