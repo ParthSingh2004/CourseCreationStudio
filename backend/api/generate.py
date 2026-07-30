@@ -35,7 +35,7 @@ async def start_generation(req: GenerateRequest):
     if not req.content_types:
         raise HTTPException(status_code=400, detail="At least one content type must be selected.")
         
-    valid_types = {'text', 'quizzes', 'flashcards', 'video', 'audio'}
+    valid_types = {'text', 'quizzes', 'flashcards', 'video', 'audio', 'avatar'}
     invalid_types = set(req.content_types) - valid_types
     if invalid_types:
         raise HTTPException(status_code=400, detail=f"Invalid content type(s): {', '.join(invalid_types)}")
